@@ -1,0 +1,53 @@
+<p [ngStyle]="styles" 
+[ngClass]="{'big-font': shouldFontBeBig}">directives-demo works!</p>
+
+<div>
+    <button (click)="styles.color = 'red'">Change style</button>
+</div>
+
+<div>
+    <button (click)="shouldFontBeBig = true;">Make text bigger!</button>
+</div>
+
+<div>
+    <button (click)="shouldShowText = true">Make text visible!</button>
+</div>
+
+<p *ngIf="shouldShowText; else otherText">
+    <span>
+        This text is conditional (1)
+    </span>
+</p>
+
+<ng-template [ngIf]="shouldShowText" [ngIfElse]="otherText">
+    <p>
+        <span>
+            This text is conditional (2)
+        </span>
+    </p>
+</ng-template>
+
+<ng-template #otherText let-color> 
+    <p>
+        <span>
+            This text is the other text {{color}}
+        </span>
+    </p>
+</ng-template>
+
+<ng-container [ngTemplateOutlet]="otherText" [ngTemplateOutletContext]="{ '$implicit': 'red' }">
+</ng-container>
+<ng-container [ngTemplateOutlet]="otherText" [ngTemplateOutletContext]="{ '$implicit': 'green' }">
+</ng-container>
+
+<!-- <ng-template #otherText let-color="color"> 
+    <p>
+        <span>
+            This text is the other text {{color}}
+        </span>
+    </p>
+</ng-template>
+
+<ng-container [ngTemplateOutlet]="otherText" [ngTemplateOutletContext]="{ 'color': 'red' }">
+</ng-container> -->
+
