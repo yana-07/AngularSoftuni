@@ -1,0 +1,41 @@
+<header>
+    <div class="mini-navbar-wrap">
+        <div class="logo-wrap">
+            <p class="logo"><span class="logo">SoftUni Forum</span></p>
+        </div>
+        <ng-template [ngIf]="!isLoggedIn" [ngIfElse]="logout">
+            <div class="mini-navbar" *ngIf="!userService.isLoggedIn">
+                <ul>
+                    <li>
+                        <a href="#" (click)="loginHandler()">Login</a>
+                    </li>
+                    <li>
+                        <a href="#">Register</a>
+                    </li>
+                </ul>
+            </div>
+        </ng-template>
+        <ng-template #logout>
+            <div class="mini-navbar">
+                <ul>
+                    <li>
+                        <a href="#" (click)="logoutHandler()">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </ng-template>
+    </div>
+    <nav>
+        <ul>
+            <li>
+                <a href="#">Home</a>
+            </li>
+            <li>
+                <a href="#">Themes</a>
+            </li>
+            <li>
+                <a href="#">New Theme</a>
+            </li>
+        </ul>
+    </nav>
+</header>
