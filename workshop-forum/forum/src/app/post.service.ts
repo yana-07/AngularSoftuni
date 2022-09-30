@@ -11,7 +11,7 @@ export class PostService {
 
   constructor(private http: HttpClient) { }
 
-  loadPostList$(limit?: number): Observable<IPost[]> {
+  loadPostList$(themeId?: string, limit?: number): Observable<IPost[]> {
     return this.http.get<IPost[]>(`${apiUrl}/posts${limit ? `?limit=${limit}` : ''}`);
   }
 }

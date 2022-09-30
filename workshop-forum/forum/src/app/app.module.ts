@@ -12,6 +12,7 @@ import { UserService } from './user.service';
 import { storageServiceProvider } from './storage.service';
 import { ThemeService } from './theme.service';
 import { PostService } from './post.service';
+import { PostListComponent } from './post-list/post-list.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { PostService } from './post.service';
     FooterComponent,
     ThemeListComponent,
     AsideComponent,
-    ThemeListItemComponent
+    ThemeListItemComponent,
+    PostListComponent
   ],
   imports: [
     BrowserModule,
