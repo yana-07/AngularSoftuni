@@ -29,7 +29,7 @@ yarn-error.log
 .history/*
 
 # Miscellaneous
-/views
+/_views
 /.angular/cache
 .sass-cache/
 /connect.lock

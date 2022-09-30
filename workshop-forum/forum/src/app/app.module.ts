@@ -7,6 +7,11 @@ import { HeaderComponent } from './core/header/header.component';
 import { FooterComponent } from './core/footer/footer.component';
 import { CoreModule } from './core/core.module';
 import { ThemesModule } from './feature/themes/themes.module';
+import { RouterModule } from '@angular/router';
+import { PagesModule } from './feature/pages/pages.module';
+import { AppRoutingModule } from './app-routing.module';
+import { SharedModule } from './shared/shared.module';
+import { AuthModule } from './auth/auth.module';
 
 @NgModule({
   declarations: [
@@ -15,8 +20,13 @@ import { ThemesModule } from './feature/themes/themes.module';
   imports: [
     BrowserModule,
     HttpClientModule,
-    CoreModule,
-    ThemesModule
+    CoreModule.forRoot(),
+    ThemesModule,
+    RouterModule,
+    PagesModule,
+    SharedModule,
+    AppRoutingModule,
+    AuthModule
   ],
   providers: [],
   bootstrap: [
