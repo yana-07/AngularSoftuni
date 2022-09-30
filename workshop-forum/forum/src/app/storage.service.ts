@@ -2,21 +2,16 @@ import { Injectable, Provider, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser, isPlatformServer, isPlatformWorkerApp } from '@angular/common'
 
 interface IStorage {
-  setItem<T>(key: string, item: T): T,
-  getItem<T>(key: string): T | null
+  setItem<T>(key: string, item: T): T;
+  getItem<T>(key: string): T;
 }
 
 // a dummy class to be able to use it as an annotation in the provider
 // can also be an abstract class with abstract methods
 // alternative: a custom injection token
 export class StorageService implements IStorage{
-  setItem<T>(key: string, item: T): T {
-    return item;
-  }
-  
-  getItem<T>(key: string): T | null {
-    return null;
-  }
+  setItem<T>(key: string, item: T): T { return item; }  
+  getItem<T>(key: string): T { return null as any; }
 }
 
 export function storageFactory(platformId: string): any {
@@ -48,10 +43,10 @@ export class BrowserStorage {
     return item;
   }
 
-  getItem<T>(key: string): T | null {
+  getItem<T>(key: string): T {
     let item;
     const tmp = this.localStorage.getItem(key);
-    if (!tmp) { return null; }
+    if (!tmp) { return null as any; }
     try {
       item = JSON.parse(tmp!)
     } catch {
@@ -62,14 +57,16 @@ export class BrowserStorage {
   }
 }
 
+const source: { [key: string]: any } = {};
 export class ServerStorage {
+  // an implmentation for the browser API abstraction localStorage, working on the server
   localStorage = {
-    data: {},
+    data: source,
     setItem<T>(key: string, item: T): void {
-      //this.data[key] = item;
+      this.data[key] = item;
     },
-    getItem<T>(key: string): void { // must return T
-      //return this.data[key]; 
+    getItem<T>(key: string): T {
+      return this.data[key]; 
     }
   };
 
