@@ -4,7 +4,8 @@ import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
 import { ProfileComponent } from './profile/profile.component';
 import { AuthRoutingModule } from './auth-routing.module';
-import { CoreModule } from '../core/core.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { EmailValidatorDirective } from './email-validator.directive';
 
 
 
@@ -12,14 +13,14 @@ import { CoreModule } from '../core/core.module';
   declarations: [
     RegisterComponent,
     LoginComponent,
-    ProfileComponent
+    ProfileComponent,
+    EmailValidatorDirective
   ],
   imports: [
     CommonModule,
     AuthRoutingModule,
-  ],
-  exports: [
-    RegisterComponent
+    ReactiveFormsModule,
+    FormsModule
   ]
 })
 export class AuthModule { }

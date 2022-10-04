@@ -1,16 +1,50 @@
 <div class="profile"><img src="/assets/profile.png" alt="default user">
     <h3>User Info:</h3>
-    <div class="flex">
-        <p>Username: </p>
-        <p>Johny</p>
-    </div>
-    <div class="flex">
-        <p>Email: </p>
-        <p>john.doe@gmail.com</p>
-    </div>
-    <div class="flex">
-        <p>Phone: </p>
-        <p>+359 885 888 888</p>
-    </div>
-    <button class="edit-button">Edit</button>
+
+    <ng-container *ngIf="!!currentUser">
+        <ng-container *ngIf="!isInEditMode">
+            <div class="flex">
+                <p>Username: </p>
+                <p>{{currentUser.username}}</p>
+            </div>
+            <div class="flex">
+                <p>Email: </p>
+                <p>{{currentUser.email}}</p>
+            </div>
+            <div class="flex">
+                <p>Phone: </p>
+                <p>{{currentUser.tel}}</p>
+            </div>
+            <button (click)="enterEditMode()" class="edit-button">Edit</button>
+        </ng-container>
+        
+        <ng-container *ngIf="isInEditMode">
+            <div class="profile">
+                <form #editProfileForm="ngForm" (ngSubmit)="upateProfile()">
+                    <div class="flex">
+                        <p>Username: </p>
+                        <input #username="ngModel" type="text" name="username" ngModel required minlength="5" id="username" value="Johny"
+                        [class.input-error]="username.invalid">
+                    </div>
+                    <div class="flex">
+                        <p>Email: </p>
+                        <input #email="ngModel" type="email" name="email" ngModel required emailValidator id="email" value="john.doe@gmail.com"
+                        [class.input-error]="email.touched && email.invalid">
+                    </div>
+                    <div class="flex">
+                        <p>Phone: </p>
+                        <div>
+                            <select name="select-tel" ngModel id="select-tel" class="tel">
+                                <option value="00359">+359</option>
+                            </select>
+                            <input type="text" name="tel" ngModel id="tel" value="885 888 888">
+                        </div>
+                    </div>
+                    <button type="button" (click)="isInEditMode = false" class="red-button">Cancel</button>
+                    <button [disabled]="editProfileForm.invalid" class="green-button">Save</button>
+                </form>
+            </div>
+        </ng-container>
+    </ng-container>
+  
 </div>
