@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs';
+import { AuthService } from 'src/app/auth.service';
 import { IPost, ITheme } from 'src/app/core/interfaces';
 import { ThemeService } from 'src/app/core/theme.service';
-import { UserService } from 'src/app/core/user.service';
 
 @Component({
   selector: 'app-theme-details-page',
@@ -13,13 +14,13 @@ export class ThemeDetailsPageComponent implements OnInit {
 
   theme!: ITheme<IPost>;
 
-  isLoggedIn = this.userservice.isLoggedIn;
+  isLoggedIn$: Observable<boolean> = this.authservice.isLoggedIn$;
   canSubscribe: boolean = false;
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private themeseService: ThemeService,
-    private userservice: UserService) { }
+    private authservice: AuthService) { }
 
   ngOnInit(): void {
     //const themeId = this.activatedRoute.snapshot.params['themeId'];

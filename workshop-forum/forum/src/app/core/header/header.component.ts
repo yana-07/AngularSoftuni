@@ -1,5 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { map, Observable, Subscription } from 'rxjs';
+import { AuthService } from 'src/app/auth.service';
 import { IUser } from '../interfaces';
+import { Message, MessageBusService, MessageType } from '../message-bus.service';
 import { UserService } from '../user.service';
 
 @Component({
@@ -7,19 +11,61 @@ import { UserService } from '../user.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit, OnDestroy{
 
-  get isLoggedIn(): boolean {
-    return this.userService.isLoggedIn;
+  currentUser$: Observable<IUser> = this.authService.currentUser$;
+  isLoggedIn$: Observable<boolean> = this.authService.isLoggedIn$;
+
+  message!: string;
+  isMessageError!: boolean;
+
+  private subscription!: Subscription;
+
+  private isLoggingOut: boolean = false;
+
+  constructor(
+    public authService: AuthService,
+    private messageBus: MessageBusService,
+    private router: Router) {
   }
 
-  get currentUser(): IUser {
-    return this.userService.currentUser;
+  ngOnInit(): void {
+    this.subscription = this.messageBus.onNewMessage$.subscribe(newMessage => {
+      this.message = newMessage?.text || '';
+      this.isMessageError = newMessage?.type === MessageType.Error;
+
+      // Beware of recursion
+      if (!!this.message) {
+        console.log('timeOut')
+        setTimeout(() => {
+          this.messageBus.clear();
+        }, 5000);
+      }
+    })
   }
 
-  constructor(public userService: UserService) { }
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
+  }
 
   logoutHandler(): void {
-    this.userService.logout();
+    if (this.isLoggingOut) {
+      return;
+    }
+
+    this.isLoggingOut = true;
+
+    this.authService.logout$().subscribe({
+      next: args => { // response will be emitted in the next() handle in http requests
+        console.log(args);
+      },
+      complete: () => { // when the request completes (called after the next() handle in http requests)
+        this.isLoggingOut = false;     
+        this.router.navigate(['/home']);
+      },
+      error: () => {
+        this.isLoggingOut = false;  
+      }
+    });
   }
 }
