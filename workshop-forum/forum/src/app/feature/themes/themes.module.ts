@@ -9,7 +9,7 @@ import { ThemesRoutingModule } from './themes-routing.module';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ThemeDetailsPageComponent } from './theme-details-page/theme-details-page.component';
 import { ThemesNewPageComponent } from './themes-new-page/themes-new-page.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -25,7 +25,8 @@ import { FormsModule } from '@angular/forms';
     CommonModule,
     ThemesRoutingModule,
     SharedModule,
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ],
   exports: [
     // ThemeListComponent,
