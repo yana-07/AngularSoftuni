@@ -13,6 +13,14 @@ const routes: Routes = [ // Routes is an alias for Route[]
         component: HomePageComponent
     },
     {
+        path: 'user',
+        loadChildren: () => import('./auth/auth.module').then(m => m.AuthModule)
+    },
+    {
+        path: 'themes',
+        loadChildren: () => import('./feature/themes/themes.module').then(m => m.ThemesModule)
+    },
+    {
         path: '**',
         component: PageNotFoundPageComponent
     }
