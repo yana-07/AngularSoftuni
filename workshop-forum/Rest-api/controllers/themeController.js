@@ -2,7 +2,9 @@ const { themeModel } = require('../models');
 const { newPost } = require('./postController')
 
 function getThemes(req, res, next) {
-    themeModel.find()
+    const title = req.query.title || '';
+
+    themeModel.find({ themeName: { $regex: title, $options: 'i' } })
         .populate('userId')
         .then(themes => res.json(themes))
         .catch(next);
