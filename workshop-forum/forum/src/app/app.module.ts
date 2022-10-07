@@ -11,6 +11,10 @@ import { PagesModule } from './feature/pages/pages.module';
 import { AppRoutingModule } from './app-routing.module';
 import { SharedModule } from './shared/shared.module';
 import { AuthService } from './auth.service';
+import { StoreModule } from '@ngrx/store';
+import { counterReducer, currentUserReducer, IRootState } from './+store';
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+import { environment } from '../environments/environment';
 
 @NgModule({
   declarations: [
@@ -23,13 +27,21 @@ import { AuthService } from './auth.service';
     RouterModule,
     PagesModule,
     SharedModule,
-    AppRoutingModule
+    AppRoutingModule,
+    StoreModule.forRoot<IRootState>({
+      counter: counterReducer,
+      currentUser: currentUserReducer
+    }),
+    StoreDevtoolsModule.instrument({ 
+      maxAge: 25,
+      logOnly: environment.production 
+    })
   ],
   providers: [
     {
       provide: APP_INITIALIZER,
-      useFactory: (authService: AuthService) => {
-        return () => authService.authenticate$();
+      useFactory: (authService: AuthService) => { 
+        return () => authService.authenticate$(); // асинхронна операция, като всички компоненти ще бъдат инициализирани едва след приключване на асинхронната операция
       },
       deps: [AuthService],
       multi: true
