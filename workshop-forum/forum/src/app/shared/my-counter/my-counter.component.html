@@ -1,4 +1,4 @@
-<button (click)="increment()">Increment</button>
+<button data-id="increment-btn" (click)="increment()">Increment</button>
 <div>Current Count: {{ count$ | async }}</div>
-<button (click)="decrement()">Decrement</button>
-<button (click)="reset()">Reset Counter</button>
+<button data-id="decrement-btn" (click)="decrement()">Decrement</button>
+<button data-id="reset-btn" (click)="reset()">Reset Counter</button>
