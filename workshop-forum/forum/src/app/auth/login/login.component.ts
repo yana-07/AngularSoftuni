@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { tap } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { Observable, tap } from 'rxjs';
 import { AuthService } from 'src/app/auth.service';
 import { MessageBusService, MessageType } from 'src/app/core/message-bus.service';
 import { UserService } from 'src/app/core/user.service';
+import { IAuthModuleState } from '../+store';
+import { initializeLoginState, loginProcessError, startLoginProcess } from '../+store/actions';
+import { loginErrorMessageSelector, loginIsLoginPendingSelector } from '../+store/selectors';
 import { emailValidator } from '../util';
 
 const myRequired = (control: AbstractControl): ValidationErrors | null => {
@@ -18,7 +22,9 @@ const myRequired = (control: AbstractControl): ValidationErrors | null => {
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  errorMessage: string = '';
+  // they become global variables: keep in mind when reloading components -> reset state
+  errorMessage$: Observable<string> = this.store.select(loginErrorMessageSelector);
+  isLoginPending$: Observable<boolean> = this.store.select(loginIsLoginPendingSelector);
 
   loginFormGroup: FormGroup = this.formBuilder.group({
     'email': new FormControl('', {
@@ -33,12 +39,15 @@ export class LoginComponent implements OnInit {
     private messageBus: MessageBusService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private formBuilder: FormBuilder) { }
+    private formBuilder: FormBuilder,
+    private store: Store<IAuthModuleState>) { }
 
   ngOnInit(): void {
     // this.loginFormGroup.get('email')?.valueChanges.subscribe(value =>{
     //   console.log(value)
     // });
+
+    this.store.dispatch(initializeLoginState()); // can also be done on destroy
   }
 
   // loginHandler() {
@@ -52,7 +61,7 @@ export class LoginComponent implements OnInit {
 
     //console.log('from ngSubmit');
 
-    this.errorMessage = '';
+    this.store.dispatch(startLoginProcess());
 
     this.authService.login$(this.loginFormGroup.value).subscribe({      
       next: () => {
@@ -70,7 +79,7 @@ export class LoginComponent implements OnInit {
       complete: () => {
       },
       error: (err) => {
-        this.errorMessage = err.error.message;
+        this.store.dispatch(loginProcessError({errorMessage: err.error.message}));
       }
     });
   }

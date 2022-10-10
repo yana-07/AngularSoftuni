@@ -3,7 +3,7 @@
     <fieldset>
         <h2>Login Form</h2>
 
-        <p *ngIf="errorMessage" class="error">{{errorMessage}}</p>
+        <p *ngIf="(errorMessage$ | async) as errorMessage" class="error">{{errorMessage}}</p>
 
         <p class="field field-icon">
             <label for="email"><span><i class="fas fa-envelope"></i></span></label>
@@ -34,7 +34,8 @@
             </p> 
         </ng-container>
         
-        <button [disabled]="loginFormGroup.invalid">Login</button>
+        <!-- <button [disabled]="loginFormGroup.invalid">Login</button> -->
+        <button [disabled]="(isLoginPending$ | async)">Login</button>
 
         <p class="text-center">
             Have an account?
