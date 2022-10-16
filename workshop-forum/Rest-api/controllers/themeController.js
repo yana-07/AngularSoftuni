@@ -10,6 +10,23 @@ function getThemes(req, res, next) {
         .catch(next);
 }
 
+function getThemesList(req, res, next) {
+    const title = req.query.title || '';
+    const startIndex = +req.query.startIndex || 0;
+    const limit = +req.query.limit || Number.MAX_SAFE_INTEGER;
+
+    Promise.all([
+        themeModel.find({ themeName: { $regex: title, $options: 'i' } })
+            .skip(startIndex)
+            .limit(limit)
+            .populate('userId'),
+        themeModel.find({ themeName: { $regex: title, $options: 'i' } })
+            .countDocuments()
+    ])
+        .then(([results, totalResults]) => res.json({ results, totalResults }))
+        .catch(next);
+}
+
 function getTheme(req, res, next) {
     const { themeId } = req.params;
 
@@ -46,9 +63,21 @@ function subscribe(req, res, next) {
         .catch(next);
 }
 
+function unsubscribe(req, res, next) {
+    const themeId = req.params.themeId;
+    const { _id: userId } = req.user;
+    themeModel.findByIdAndUpdate({ _id: themeId }, { $pull: { subscribers: userId } }, { new: true })
+        .then(updatedTheme => {
+            res.status(200).json(updatedTheme)
+        })
+        .catch(next);
+}
+
 module.exports = {
     getThemes,
+    getThemesList,
     createTheme,
     getTheme,
     subscribe,
+    unsubscribe,
 }

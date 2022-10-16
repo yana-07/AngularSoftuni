@@ -6,11 +6,13 @@ const { themeController, postController } = require('../controllers');
 // middleware that is specific to this router
 
 router.get('/', themeController.getThemes);
+router.get('/list', themeController.getThemesList);
 router.post('/', auth(), themeController.createTheme);
 
 router.get('/:themeId', themeController.getTheme);
 router.post('/:themeId', auth(), postController.createPost);
 router.put('/:themeId', auth(), themeController.subscribe);
+router.put('/:themeId/unsubscribe', auth(), themeController.unsubscribe);
 router.put('/:themeId/posts/:postId', auth(), postController.editPost);
 router.delete('/:themeId/posts/:postId', auth(), postController.deletePost);
 

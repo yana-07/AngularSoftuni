@@ -81,6 +81,17 @@ function like(req, res, next) {
         .catch(next)
 }
 
+function dislike(req, res, next) {
+    const { postId } = req.params;
+    const { _id: userId } = req.user;
+
+    console.log('dislike')
+
+    postModel.updateOne({ _id: postId }, { $pull: { likes: userId } }, { new: true })
+        .then(() => res.status(200).json({ message: 'DisLike successful!' }))
+        .catch(next)
+}
+
 module.exports = {
     getLatestsPosts,
     newPost,
@@ -88,4 +99,5 @@ module.exports = {
     editPost,
     deletePost,
     like,
+    dislike,
 }
