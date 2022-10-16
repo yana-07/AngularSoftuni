@@ -12,6 +12,10 @@ export interface CreateUserdto {
   tel?: string 
 }
 
+export interface IUpdateUserDto extends Pick<IUser, 'username' | 'email' | 'tel'> {
+  profilePicture?: File;
+}
+
 @Injectable()
 export class UserService {
 
@@ -20,5 +24,18 @@ export class UserService {
 
   getProfile$(): Observable<IUser> {
     return this.httpClient.get<IUser>(`${environment.apiUrl}/users/profile`, { withCredentials: true });
+  }
+
+  updateProfile$(newUser: IUpdateUserDto): Observable<IUser> {
+    const formData = new FormData();
+    formData.set('username', newUser.username);
+    formData.set('email', newUser.email);
+    formData.set('tel', newUser.tel);
+
+    if (!!newUser.profilePicture) {
+      formData.append('profilePicture', newUser.profilePicture)
+    }
+
+    return this.httpClient.put<IUser>(`${environment.apiUrl}/users/profile`, formData, { withCredentials: true })
   }
 }

@@ -1,6 +1,6 @@
 import { createReducer, on } from "@ngrx/store";
 import { ILoginPageState, IProfilePageState } from ".";
-import { enterEditMode, exitEditMode, initializeLoginState, loginProcessError, profileLoaded, profileLoadError, startLoginProcess } from "./actions";
+import { enterEditMode, exitEditMode, initializeLoginState, loginProcessError, profileLoaded, profileLoadError, startLoginProcess, updateProfileCompleted, updateProfileError } from "./actions";
 
 export const profileReducer = createReducer<IProfilePageState>(
     {
@@ -31,8 +31,21 @@ export const profileReducer = createReducer<IProfilePageState>(
             ...state,
             errorOccurred: true
         }
+    }),
+    on(updateProfileCompleted, (state, action) => {
+        return {
+            ...state,
+            currentProfile: action.updatedUser,
+            isInEditMode: false
+        }
+    }),
+    on(updateProfileError, (state, action) => {
+        return {
+            ...state,
+            errorMessage: action.errorMessage
+        }
     })
-)
+);
 
 const loginInitialState = {
     errorMessage: '',
@@ -61,4 +74,4 @@ export const loginReducer = createReducer<ILoginPageState>(
             ...loginInitialState
         }
     })
-)
+);

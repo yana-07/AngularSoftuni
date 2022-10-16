@@ -6,8 +6,9 @@ import { Observable, pipe, tap } from 'rxjs';
 import { IUser } from 'src/app/core/interfaces';
 import { UserService } from 'src/app/core/user.service';
 import { IAuthModuleState } from '../+store';
-import { enterEditMode, exitEditMode, profileLoaded, profilePageInitialized } from '../+store/actions';
+import { enterEditMode, exitEditMode, profileLoaded, profilePageInitialized, updateProfileStarted } from '../+store/actions';
 
+const bgCountryTelPrefix = '00359';
 @Component({
   selector: 'app-profile',
   templateUrl: './profile.component.html',
@@ -24,6 +25,8 @@ export class ProfileComponent implements OnInit {
   isInEditMode$: Observable<boolean> = this.store.select(state => state.auth.profile.isInEditMode);
 
   hasErrorOccurred$: Observable<boolean> = this.store.select(state => state.auth.profile.errorOccurred);
+
+  newProfilePicture?: File;
 
   constructor(
     private userService: UserService,
@@ -67,23 +70,39 @@ export class ProfileComponent implements OnInit {
       this.editProfileForm.form.patchValue({
         username: currentUser.username,
         email: currentUser.email,
-        'select-tel': !!currentUser.tel && currentUser.tel.length > 4 
-          ? currentUser.tel.substring(0, 4) : '',
-        tel: !!currentUser.tel && currentUser.tel.length > 4 
-          ? currentUser.tel.substring(4) : currentUser.tel
+        'select-tel': (currentUser.tel || '').startsWith(bgCountryTelPrefix) 
+          ? bgCountryTelPrefix : '',
+        tel: (currentUser.tel || '').startsWith(bgCountryTelPrefix) 
+          ? currentUser.tel.replace(bgCountryTelPrefix, '') : currentUser.tel,
       })
     });
   }
 
   upateProfile(): void {
-    console.log(this.editProfileForm.value);
-    // TODO: continue with http request to api
-    //this.isInEditMode = false;
-    this.exitEditMode();
+    let countryPrefix = this.editProfileForm.value['select-tel'];
+    if (!this.editProfileForm.value.tel) {
+      countryPrefix = '';
+    }
+
+    this.store.dispatch(updateProfileStarted({
+      user: {
+        username: this.editProfileForm.value.username,
+        email: this.editProfileForm.value.email,
+        tel: countryPrefix + this.editProfileForm.value.tel,
+        profilePicture: this.newProfilePicture
+      }
+    }));
+    
+    //this.exitEditMode();
   }
 
   exitEditMode(): void {
     this.store.dispatch(exitEditMode());
+  }
+
+  handleProfilePictureChange(event: InputEvent): void {
+    const input: HTMLInputElement = event.target as HTMLInputElement;
+    this.newProfilePicture = input.files![0];
   }
 
 }
