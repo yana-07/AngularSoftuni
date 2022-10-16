@@ -1,5 +1,12 @@
 <form>
     <input [formControl]="searchControl" type="text" placeholder="Serach for Posts">
+    <div>
+        <button [disabled]="currentPage === 0" (click)="goOnePageBack()">Previous Page</button>
+        Showing {{totalResults === 0 ? 0 : currentPage * pageSize + 1}}-{{
+            (currentPage + 1) * pageSize > totalResults ? totalResults :  (currentPage + 1) * pageSize
+        }} of {{totalResults}} results
+        <button [disabled]="(currentPage + 1) * pageSize >= totalResults" (click)="goOnePageForward()">Next Page</button>
+    </div>
 </form>
 <div *ngIf="themeList">
     <app-theme-list-item *ngFor="let theme of themeList" [theme]="theme">
